@@ -27,49 +27,45 @@ transit_composition(T, Ls, Ls_1, Vs, Vs_1) :-
 write_composition :-
     writeln("strict digraph {"),
     findall(_, (reachable(Ls0, Vs0), transit_composition(T, Ls0, Ls1, Vs0, Vs1), write_composition_edge(T, Ls0, Ls1, Vs0, Vs1)), _),
+    findall(_, (deadlock(Ls, Vs), write("  "), write_state(Ls, Vs), write("[style=\"solid,filled\", fillcolor=\"#FF7777\"]\n")), _),
     writeln("}").
 write_composition_edge(T, Ls0, Ls1, Vs0, Vs1) :-
     write("  "),
     write_state(Ls0, Vs0),
     write(" -> "),
     write_state(Ls1, Vs1),
-    format(" [label = ~q]\n", [T]).
+    format(" [label=~q]\n", [T]).
 write_state(Ls, Vs) :- write_atoms(Ls, "_"), write("_"), write_atoms(Vs, "_").
 
 write_thread :-
     writeln("strict digraph {"),
     findall(_, (transit(T, L0, L1, _, _), write_edge(T, L0, L1)), _),
     writeln("}").
-write_edge(T, L0, L1) :- format("  ~w -> ~w [label = ~q]\n", [L0, L1, T]).
+write_edge(T, L0, L1) :- format("  ~w -> ~w [label=~q]\n", [L0, L1, T]).
 write_atoms([X0,X1|Xs], C) :- write(X0), write(C), write_atoms([X1|Xs], C).
 write_atoms([X], _) :- write(X).
 
 % ---- Target specific ----
 init_locations(['P0', 'Q0']).
-init_vars([0, 0, 0, 0]).
+init_vars([0, 0]).
 
 transit(T, L0, L1, Vs, Vs_1) :-
-    transit_lock_1(T, L0, L1, Vs, Vs_1);
-    transit_read_1(T, L0, L1, Vs, Vs_1);
-    transit_inc_1(T, L0, L1, Vs, Vs_1);
-    transit_unlock_1(T, L0, L1, Vs, Vs_1);
-    transit_write_1(T, L0, L1, Vs, Vs_1);
-    transit_lock_2(T, L0, L1, Vs, Vs_1);
-    transit_read_2(T, L0, L1, Vs, Vs_1);
-    transit_inc_2(T, L0, L1, Vs, Vs_1);
-    transit_write_2(T, L0, L1, Vs, Vs_1);
-    transit_unlock_2(T, L0, L1, Vs, Vs_1).
+    transit_lock_0_P(T, L0, L1, Vs, Vs_1);
+    transit_lock_1_P(T, L0, L1, Vs, Vs_1);
+    transit_unlock_0_P(T, L0, L1, Vs, Vs_1);
+    transit_unlock_1_P(T, L0, L1, Vs, Vs_1);
+    transit_lock_0_Q(T, L0, L1, Vs, Vs_1);
+    transit_lock_1_Q(T, L0, L1, Vs, Vs_1);
+    transit_unlock_0_Q(T, L0, L1, Vs, Vs_1);
+    transit_unlock_1_Q(T, L0, L1, Vs, Vs_1).
 
-transit_lock_1('lock_1', 'P0', 'P1', [0, X, T1, T2], [1, X, T1, T2]).
-transit_read_1('read_1', 'P1', 'P2', [M, X, _, T2], [M, X, X, T2]).
-transit_inc_1('inc_1', 'P2', 'P3', [M, X, T1, T2], [M, X, T1_1, T2]) :- plus(T1, 1, T1_1).
-transit_write_1('write_1', 'P3', 'P4', [M, _, T1, T2], [M, T1, T1, T2]).
-transit_unlock_1('unlock_1', 'P4', 'P5', [1, X, T1, T2], [0, X, T1, T2]).
-
-transit_lock_2('lock_2', 'Q0', 'Q1', [0, X, T1, T2], [1, X, T1, T2]).
-transit_read_2('read_2', 'Q1', 'Q2', [M, X, T1, _], [M, X, T1, X]).
-transit_inc_2('inc_2', 'Q2', 'Q3', [M, X, T1, T2], [M, X, T1, T2_1]) :- plus(T2, 1, T2_1).
-transit_write_2('write_2', 'Q3', 'Q4', [M, _, T1, T2], [M, T2, T1, T2]).
-transit_unlock_2('unlock_2', 'Q4', 'Q5', [1, X, T1, T2], [0, X, T1, T2]).
+transit_lock_0_P('lock_0_P', 'P0', 'P1', [0, M2], [1, M2]).
+transit_lock_1_P('lock_1_P', 'P1', 'P2', [M1, 0], [M1, 1]).
+transit_unlock_0_P('unlock_0_P', 'P2', 'P3', [1, M2], [0, M2]).
+transit_unlock_1_P('unlock_1_P', 'P3', 'P0', [M1, 1], [M1, 0]).
+transit_lock_1_Q('lock_1_Q', 'Q0', 'Q1', [M1, 0], [M1, 1]).
+transit_lock_0_Q('lock_0_Q', 'Q1', 'Q2', [0, M2], [1, M2]).
+transit_unlock_0_Q('unlock_0_Q', 'Q2', 'Q3', [1, M2], [0, M2]).
+transit_unlock_1_Q('unlock_1_Q', 'Q3', 'Q0', [M1, 1], [M1, 0]).
 
 % vim:ft=prolog
