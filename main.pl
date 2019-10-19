@@ -29,7 +29,7 @@ transit_composition(T, Ls, Ls_1, Vs, Vs_1) :-
 
 write_composition :-
     writeln("strict digraph {"),
-    findall((T, Ls0, Ls1), (locations(Ls0), locations(Ls1), transit_composition(T, Ls0, Ls1, _, _), write_composition_edge(T, Ls0, Ls1)), _),
+    findall((T, Ls0), (reachable(Ls0, _), transit_composition(T, Ls0, Ls1, _, _), write_composition_edge(T, Ls0, Ls1)), _),
     writeln("}").
 
 write_thread :-
@@ -44,13 +44,6 @@ write_edge(T, L0, L1) :- write("  "), write(L0), write("->"), write(L1), write("
 % ---- Target specific ----
 init_locations(['P0', 'Q0']).
 init_vars([0, 0, 0]).
-
-% TODO: filter reacable.
-locations(Ls) :- location(L0), location(L1), Ls = [L0, L1].
-location(L) :-
-    transit(_, L, _, _, _);
-    transit(_, _, L, _, _);
-    init_locations(Ls), member(L, Ls).
 
 transit(T, L0, L1, Vs, Vs_1) :-
     transit_read_1(T, L0, L1, Vs, Vs_1);
