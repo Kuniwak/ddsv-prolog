@@ -29,17 +29,21 @@ transit_composition(T, Ls, Ls_1, Vs, Vs_1) :-
 
 write_composition :-
     writeln("strict digraph {"),
-    findall((T, Ls0), (reachable(Ls0, _), transit_composition(T, Ls0, Ls1, _, _), write_composition_edge(T, Ls0, Ls1)), _),
+    findall(_, (reachable(Ls0, _), transit_composition(T, Ls0, Ls1, _, _), format_composition_edge(T, Ls0, Ls1, S), writeln(S)), _),
     writeln("}").
 
 write_thread :-
     writeln("strict digraph {"),
-    findall((T, L0, L1), (transit(T, L0, L1, _, _), write_edge(T, L0, L1)), _),
+    findall(_, (transit(T, L0, L1, _, _), format_edge(T, L0, L1, S), writeln(S)), _),
     writeln("}").
 
-write_composition_edge(T, Ls0, Ls1) :- write("  "), write_composition_node(Ls0), write("->"), write_composition_node(Ls1), write(" [label = "), write(T), writeln("]").
-write_composition_node(Ls) :- findall(L, (member(L, Ls), write(L), write("_")), _).
-write_edge(T, L0, L1) :- write("  "), write(L0), write("->"), write(L1), write(" [label = "), write(T), writeln("]").
+format_composition_edge(T, Ls0, Ls1, S) :-
+    join_atoms(Ls0, "_", S0),
+    join_atoms(Ls1, "_", S1),
+    swritef(S, "  %w -> %w [label = %w]", [S0, S1, T]).
+format_edge(T, L0, L1, S) :- swritef(S, "  %w -> %w [label = %w]", [L0, L1, T]).
+join_atoms([X0,X1|Xs], C, S) :- join_atoms([X1|Xs], C, Y), swritef(S, "%w%w%w", [X0, C, Y]).
+join_atoms([X], _, S) :- swritef(S, "%w", [X]).
 
 % ---- Target specific ----
 init_locations(['P0', 'Q0']).
