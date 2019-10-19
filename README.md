@@ -5,14 +5,16 @@
 $ edit ./main.pl
 ```
 
-You must write 4 predicates.
+You must write at least 4 predicates on the target specific part:
 
 | Predicate | Description | Example |
 |:--|:--|:--|
 | `init_locations(Ls).` | Define an initial locations. | `init_locations(['P0', 'Q0']).` |
 | `init_vars(Vs).` | Define an initial shared variables. | `init_vars([0, 0]).` |
 | `transit(T, L0, L1, Vs0, Vs1)` | Define the disjunction of all transitions. | `transit(T, L0, L1, Vs0, Vs1) :- transit_Foo(T, L0, L1, Vs0, Vs1); transit_Bar(T, L0, L1, Vs0, Vs1).` |
-| `transit_Foo(T, L0, L1, Vs0, Vs1).` | Define a transition. <dl><dt><code>T</code></dt><dd>Label for the transition.</dd><dt><code>L0</code></dt><dd>Previous location.</dd><dt><code>L1</code></dt><dd>Next location.</dd><dt><code>Vs0</code></dt><dd>Preious values of shared variables.</dd><dt><code>Vs1</code></dt><dd>Next values of shared variables.</dd></dl> | `transit_Foo('Foo', 'P0', 'P1', [0, M2], [1, M2]).` |
+| `transit_Foo(T, L0, L1, Vs0, Vs1).` | Define a transition. The transition can occure if the transition is true.It means, you can write a guard as `Vs0`. <dl><dt><code>T</code></dt><dd>Label for the transition.</dd><dt><code>L0</code></dt><dd>Previous location.</dd><dt><code>L1</code></dt><dd>Next location.</dd><dt><code>Vs0</code></dt><dd>Preious values of shared variables.</dd><dt><code>Vs1</code></dt><dd>Next values of shared variables.</dd></dl> | `transit_Foo('Foo', 'P0', 'P1', [0, M2], [1, M2]).` |
+
+This is the example of a target specific part:
 
 ```prolog
 ...
