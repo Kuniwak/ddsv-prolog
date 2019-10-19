@@ -23,7 +23,7 @@ transit_Bar('Bar', 'P1', 'P2', [M1, 0], [M1, 1]).
 
 
 ### Visualize
-```
+```console
 $ ./viz-composition
 strict digraph {
   P3_Q0_0_1 -> P0_Q0_0_0 [label=unlock_1_P]
