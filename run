@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+BASE_DIR="$(cd "$(dirname "$0")"; pwd)"
+WORKSPACE_DIR="$BASE_DIR"
+
+
+has() {
+	local command="$1"
+	which "$1" 2>&1 >/dev/null
+}
+
+
+(cd "$WORKSPACE_DIR"
+	echo "# Checking predictions..."
+	swipl -f ./main.pl -q -g 'spec, halt.'
+)
