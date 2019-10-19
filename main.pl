@@ -34,14 +34,14 @@ write_composition_edge(T, Ls0, Ls1, Vs0, Vs1) :-
     write_state(Ls0, Vs0),
     write(" -> "),
     write_state(Ls1, Vs1),
-    format(" [label=~q]\n", [T]).
+    format(" [label=~w]\n", [T]).
 write_state(Ls, Vs) :- write_atoms(Ls, "_"), write("_"), write_atoms(Vs, "_").
 
 write_thread :-
     writeln("strict digraph {"),
     findall(_, (transit(T, L0, L1, _, _), write_edge(T, L0, L1)), _),
     writeln("}").
-write_edge(T, L0, L1) :- format("  ~w -> ~w [label=~q]\n", [L0, L1, T]).
+write_edge(T, L0, L1) :- format("  ~w -> ~w [label=~w]\n", [L0, L1, T]).
 write_atoms([X0,X1|Xs], C) :- write(X0), write(C), write_atoms([X1|Xs], C).
 write_atoms([X], _) :- write(X).
 
@@ -50,22 +50,10 @@ init_locations(['P0', 'Q0']).
 init_vars([0, 0]).
 
 transit(T, L0, L1, Vs, Vs_1) :-
-    transit_lock_0_P(T, L0, L1, Vs, Vs_1);
-    transit_lock_1_P(T, L0, L1, Vs, Vs_1);
-    transit_unlock_0_P(T, L0, L1, Vs, Vs_1);
-    transit_unlock_1_P(T, L0, L1, Vs, Vs_1);
-    transit_lock_0_Q(T, L0, L1, Vs, Vs_1);
-    transit_lock_1_Q(T, L0, L1, Vs, Vs_1);
-    transit_unlock_0_Q(T, L0, L1, Vs, Vs_1);
-    transit_unlock_1_Q(T, L0, L1, Vs, Vs_1).
+    transit_Foo(T, L0, L1, Vs, Vs_1);
+    transit_Bar(T, L0, L1, Vs, Vs_1).
 
-transit_lock_0_P('lock_0_P', 'P0', 'P1', [0, M2], [1, M2]).
-transit_lock_1_P('lock_1_P', 'P1', 'P2', [M1, 0], [M1, 1]).
-transit_unlock_0_P('unlock_0_P', 'P2', 'P3', [1, M2], [0, M2]).
-transit_unlock_1_P('unlock_1_P', 'P3', 'P0', [M1, 1], [M1, 0]).
-transit_lock_1_Q('lock_1_Q', 'Q0', 'Q1', [M1, 0], [M1, 1]).
-transit_lock_0_Q('lock_0_Q', 'Q1', 'Q2', [0, M2], [1, M2]).
-transit_unlock_0_Q('unlock_0_Q', 'Q2', 'Q3', [1, M2], [0, M2]).
-transit_unlock_1_Q('unlock_1_Q', 'Q3', 'Q0', [M1, 1], [M1, 0]).
+transit_Foo('Foo', 'P0', 'P1', [0, M2], [1, M2]).
+transit_Bar('Bar', 'P1', 'P2', [M1, 0], [M1, 1]).
 
 % vim:ft=prolog
