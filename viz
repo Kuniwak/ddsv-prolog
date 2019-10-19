@@ -12,6 +12,5 @@ has() {
 
 
 (cd "$WORKSPACE_DIR"
-	echo "# Checking predictions..."
-	swipl -f ./main.pl -q -g 'spec, halt.'
+	swipl -f ./main.pl -q -g 'write_digraph, halt.'
 )
