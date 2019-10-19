@@ -2,11 +2,6 @@
 
 % TODO: Valid end state
 
-run(Ls_n, Vs_n) :-
-    init_locations(Ls_0),
-    init_vars(Vs_0),
-    transit_composition_transitive(Ls_0, Ls_n, Vs_0, Vs_n).
-
 deadlock(Ls_n, Vs_n) :-
     reachable(Ls_n, Vs_n),
     \+ transit_composition(_, Ls_n, _, Vs_n, _).
