@@ -49,11 +49,7 @@ write_atoms([X], _) :- write(X).
 init_locations(['P0', 'Q0']).
 init_vars([0, 0]).
 
-transit(T, L0, L1, Vs, Vs_1) :-
-    transit_Foo(T, L0, L1, Vs, Vs_1);
-    transit_Bar(T, L0, L1, Vs, Vs_1).
-
-transit_Foo('Foo', 'P0', 'P1', [0, M2], [1, M2]).
-transit_Bar('Bar', 'P1', 'P2', [M1, 0], [M1, 1]).
+transit('Foo', 'P0', 'P1', [0, M2], [1, M2]).
+transit('Bar', 'P1', 'P2', [M1, 0], [M1, 1]).
 
 % vim:ft=prolog
