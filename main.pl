@@ -47,9 +47,18 @@ write_atoms([X], _) :- write(X).
 
 % ---- Target specific ----
 init_locations(['P0', 'Q0']).
-init_vars([0, 0]).
+init_vars([0, 0, 0, 0]).
 
-transit('Foo', 'P0', 'P1', [0, M2], [1, M2]).
-transit('Bar', 'P1', 'P2', [M1, 0], [M1, 1]).
+transit('lock_1', 'P0', 'P1', [0, X, T1, T2], [1, X, T1, T2]).
+transit('read_1', 'P1', 'P2', [M, X, _, T2], [M, X, X, T2]).
+transit('inc_1', 'P2', 'P3', [M, X, T1, T2], [M, X, T1_1, T2]) :- plus(T1, 1, T1_1).
+transit('write_1', 'P3', 'P4', [M, _, T1, T2], [M, T1, T1, T2]).
+transit('unlock_1', 'P4', 'P5', [1, X, T1, T2], [0, X, T1, T2]).
+
+transit('lock_2', 'Q0', 'Q1', [0, X, T1, T2], [1, X, T1, T2]).
+transit('read_2', 'Q1', 'Q2', [M, X, T1, _], [M, X, T1, X]).
+transit('inc_2', 'Q2', 'Q3', [M, X, T1, T2], [M, X, T1, T2_1]) :- plus(T2, 1, T2_1).
+transit('write_2', 'Q3', 'Q4', [M, _, T1, T2], [M, T2, T1, T2]).
+transit('unlock_2', 'Q4', 'Q5', [1, X, T1, T2], [0, X, T1, T2]).
 
 % vim:ft=prolog
